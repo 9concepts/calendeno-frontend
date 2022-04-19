@@ -1,43 +1,52 @@
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { Layout } from "@components/layouts";
+import { YahooLoginForm } from "@components/organisms/YahooLoginForm";
+import { useCookies } from "@hooks/use-cookies";
 
 export const YahooTemplate = (): JSX.Element => {
-  const isBrowser = typeof window !== "undefined";
+  const [cookies, setCookies] = useCookies("yahoo-cookies");
 
-  let socket: WebSocket | null = null;
+  const [calendar, setCalendar] = useState({} as CalendarInMonth);
 
-  useEffect(() => {
-    if (isBrowser)
-      socket = new WebSocket("ws://localhost:8080/api/alpha/sessions/new");
+  const getCalendar = async () => {
+    await fetch("http://localhost:8080/api/alpha/calendars", {
+      method: "POST",
+      body: JSON.stringify({
+        year: 2022,
+        month: 3,
+        cookies,
+      }),
+    })
+      .then(async (response) => {
+        const calendarInMonth = await response.json();
+        setCalendar(calendarInMonth);
 
-    if (socket) {
-      socket.onopen = () => {
-        console.log("hi");
-      };
-    }
-  }, []);
-
-  const [code, setCode] = useState("");
-
-  const handleCodeInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setCode(event.currentTarget.value);
-
-    console.log(code);
+        console.log(calendarInMonth);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   return (
-    <div>
-      <button className="bg-gray-500">send sms</button>
+    <Layout>
       <div>
-        <input
-          type="text"
-          name="verification-code"
-          value={code}
-          onChange={(event) => handleCodeInputChange(event)}
-        />
-        <button className="bg-gray-500">send code</button>
+        <YahooLoginForm />
+        <button onClick={getCalendar}>get</button>
+        {calendar.items &&
+          calendar.items.map((cal) => {
+            return (
+              <div key={cal.date}>
+                <div>{cal.date}</div>
+                <ul>
+                  {cal.events.map((event) => {
+                    return <li key={event.title}>{event.title}</li>;
+                  })}
+                </ul>
+              </div>
+            );
+          })}
       </div>
-    </div>
+    </Layout>
   );
 };
