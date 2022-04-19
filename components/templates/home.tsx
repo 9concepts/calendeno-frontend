@@ -14,6 +14,10 @@ export const HomeTemplate = (): JSX.Element => {
           Hello
         </h1>
 
+        {isLoading && <div>loading...</div>}
+
+        {error && <div>Sorry, some errors occured</div>}
+
         {calendar?.items && <Month calendar={calendar} />}
       </div>
     </Layout>
