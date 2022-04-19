@@ -1,14 +1,14 @@
 import useSWR from "swr";
 import { useCookies } from "@hooks/use-cookies";
 
-export function useCalendar() {
+export function useCalendar(year: number, month: number) {
   const [cookies] = useCookies("yahoo-cookies");
   const fetcher = (url: string) =>
     fetch(url, {
       method: "POST",
       body: JSON.stringify({
-        year: 2022,
-        month: 3,
+        year,
+        month,
         cookies,
       }),
     }).then((res) => res.json());

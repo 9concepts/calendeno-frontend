@@ -6,12 +6,13 @@ type Props = {
 };
 
 export const Day = ({ date, events }: Props): JSX.Element => {
+  const day = new Date(date).getDate();
   return (
-    <div className="border w-40 h-64 overflow-scroll">
-      <div className="text-center">{date}</div>
+    <div className="border w-full h-24 md:h-64 overflow-scroll">
+      <div className="text-center">{day}</div>
 
       {events.map((event) => (
-        <div className="mb-1" key={event.title}>
+        <div className="mb-1 text-xs" key={event.title}>
           <DailyEvent title={event.title}></DailyEvent>
         </div>
       ))}
