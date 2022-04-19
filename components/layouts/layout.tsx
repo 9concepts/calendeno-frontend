@@ -5,5 +5,5 @@ type Props = {
 };
 
 export const Layout = ({ children }: Props): JSX.Element => {
-  return <div>{children}</div>;
+  return <div className="flex justify-center">{children}</div>;
 };
